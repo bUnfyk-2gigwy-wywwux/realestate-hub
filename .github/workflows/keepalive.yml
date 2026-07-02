@@ -34,8 +34,8 @@ jobs:
           URLS = [
               "https://realestate-risk-screenerrealestate-risk-screener-bdlnggh8pipyk.streamlit.app",
               "https://gyeyang-tax.streamlit.app",
+              "https://gyeyang-avm.streamlit.app",
               # 추후 배포 시 주석 해제 후 URL 입력
-              # "https://TODO-부동산AVM.streamlit.app",
               # "https://TODO-경매레이더.streamlit.app",
           ]
 
