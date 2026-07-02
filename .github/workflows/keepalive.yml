@@ -1,7 +1,8 @@
 # ============================================================
-# Streamlit 앱 수면 방지 (Keep-Alive)
-# 위치: .github/workflows/keepalive.yml  ← 반드시 이 경로
-# 동작: 하루 3회 앱 URL에 접속 요청 → 무접속 상태 차단
+# Streamlit 앱 수면 방지 v2 (브라우저 로드 방식)
+# 위치: .github/workflows/keepalive.yml  ← 기존 파일 교체
+# 동작: 하루 3회 실제 브라우저(Chromium)로 앱 방문
+#       → 실방문 트래픽으로 수면 차단 + 잠든 앱은 버튼 자동 클릭으로 깨움
 # 실행 시각(KST): 09:00 / 17:00 / 01:00
 # ============================================================
 name: Streamlit Keep-Alive
@@ -15,18 +16,47 @@ jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Ping Streamlit apps
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Playwright
         run: |
-          set +e
-          URLS=(
-            "https://realestate-risk-screenerrealestate-risk-screener-bdlnggh8pipyk.streamlit.app"
-            "https://gyeyang-tax.streamlit.app"
-            # ▼ 추후 배포 시 주석 해제 후 URL 입력
-            # "https://TODO-부동산AVM.streamlit.app"
-            # "https://TODO-경매레이더.streamlit.app"
-          )
-          for url in "${URLS[@]}"; do
-            code=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 90 "$url")
-            echo "[$code] $url"
-          done
-          echo "완료: $(date '+%Y-%m-%d %H:%M') UTC"
+          pip install playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Visit apps (wake if sleeping)
+        run: |
+          python - <<'PYEOF'
+          from playwright.sync_api import sync_playwright
+
+          URLS = [
+              "https://realestate-risk-screenerrealestate-risk-screener-bdlnggh8pipyk.streamlit.app",
+              "https://gyeyang-tax.streamlit.app",
+              # 추후 배포 시 주석 해제 후 URL 입력
+              # "https://TODO-부동산AVM.streamlit.app",
+              # "https://TODO-경매레이더.streamlit.app",
+          ]
+
+          with sync_playwright() as p:
+              browser = p.chromium.launch()
+              page = browser.new_page()
+              for url in URLS:
+                  try:
+                      page.goto(url, wait_until="domcontentloaded", timeout=120000)
+                      page.wait_for_timeout(8000)  # 앱 로드 대기
+                      wake = page.get_by_text("get this app back up", exact=False)
+                      if wake.count() > 0:
+                          wake.first.click()
+                          print(f"[WAKE] {url} — 수면 상태 발견, 깨우기 클릭 후 60초 대기")
+                          page.wait_for_timeout(60000)
+                          print(f"[WAKE-DONE] {url} — 제목: {page.title()}")
+                      else:
+                          print(f"[OK] {url} — 정상 가동 중 (제목: {page.title()})")
+                      page.wait_for_timeout(5000)  # 방문 세션 유지
+                  except Exception as e:
+                      print(f"[ERR] {url} — {type(e).__name__}: {e}")
+              browser.close()
+          print("완료")
+          PYEOF
