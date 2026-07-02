@@ -117,6 +117,7 @@
   .qna-opt .s{font-size:.82rem;color:var(--muted);margin-top:3px;word-break:keep-all}
   .qna-back{margin-top:20px;font-size:.86rem;color:var(--muted);font-weight:600;display:inline-flex;align-items:center;gap:6px}
   .qna-back:hover{color:var(--blue)}
+  .qna-nav{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
 
   /* Q&A 종착점(결과) */
   .qna-result{border-top:1px dashed var(--line);margin-top:6px;padding-top:24px}
@@ -226,7 +227,7 @@
       <span class="eyebrow">DATA-DRIVEN REAL ESTATE · 계양</span>
       <h1>부동산 고민,<br><em>질문 하나</em>로 시작하세요.</h1>
       <p>전세 안전 진단, 상속·증여세, 실거래 기반 시세 산정, 경매 분석까지 — 몇 번의 선택만으로 지금 필요한 도구를 정확히 안내해 드립니다.</p>
-      <a class="hero-cta" href="#qna">질문으로 시작하기 ↓</a>
+      <a class="hero-cta" id="heroCta" href="#qna">질문으로 시작하기 ↓</a>
       <div class="hero-meta">국토교통부 실거래가 · 정부 공공데이터 기반 자체 개발 도구</div>
     </div>
   </div>
@@ -423,7 +424,10 @@ function renderNode(key){
   });
   html += `</div>`;
   if(pathStack.length>0){
-    html += `<button class="qna-back" id="qnaBack" type="button">← 이전 질문으로</button>`;
+    html += `<div class="qna-nav">
+      <button class="btn btn-ghost btn-sm" id="qnaBack" type="button">← 이전 질문</button>
+      <button class="btn btn-ghost btn-sm" id="qnaHome" type="button">⌂ 처음 질문으로</button>
+    </div>`;
   }
   qnaBody.innerHTML = html;
 
@@ -436,6 +440,8 @@ function renderNode(key){
   });
   const back = document.getElementById("qnaBack");
   if(back) back.addEventListener("click", goBack);
+  const home = document.getElementById("qnaHome");
+  if(home) home.addEventListener("click", goHome);
 }
 
 function renderEnd(node){
@@ -467,14 +473,22 @@ function renderEnd(node){
       </span>
     </div>`;
   }
-  html += `<button class="qna-back" id="qnaBack" type="button">← 이전 질문으로</button></div>`;
+  html += `<div class="qna-nav">
+    <button class="btn btn-ghost btn-sm" id="qnaBack" type="button">← 이전 질문</button>
+    <button class="btn btn-ghost btn-sm" id="qnaHome" type="button">⌂ 처음 질문으로</button>
+  </div></div>`;
   qnaBody.innerHTML = html;
   document.getElementById("qnaBack").addEventListener("click", goBack);
+  document.getElementById("qnaHome").addEventListener("click", goHome);
 }
 
 function goBack(){
   const prev = pathStack.pop();
   renderNode(prev ? prev.nodeKey : "root");
+}
+function goHome(){
+  pathStack = [];
+  renderNode("root");
 }
 document.getElementById("qnaReset").addEventListener("click",()=>{
   pathStack = [];
@@ -531,6 +545,7 @@ document.getElementById("ctaKakao").href = withUtm(LINKS.kakao,"contact_kakao");
 document.getElementById("ctaTel").href = LINKS.tel;
 document.getElementById("floatKakao").href = withUtm(LINKS.kakao,"float_kakao");
 document.getElementById("floatTel").href = LINKS.tel;
+document.getElementById("heroCta").addEventListener("click", goHome); // 상단 버튼 = 트리 처음부터 시작
 
 /* 초기 렌더 */
 renderNode("root");
