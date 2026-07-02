@@ -215,7 +215,7 @@
 <header class="hero">
   <div class="wrap">
     <div class="topbar">
-      <div class="brand"><span class="dot"></span>데이터부동산연구소</div>
+      <a class="brand" id="brandHome" href="#"><span class="dot"></span>데이터부동산연구소</a>
       <nav class="topnav" aria-label="주요 섹션">
         <a href="#qna">질문으로 찾기</a>
         <a href="#tools">도구 전체</a>
@@ -546,6 +546,11 @@ document.getElementById("ctaTel").href = LINKS.tel;
 document.getElementById("floatKakao").href = withUtm(LINKS.kakao,"float_kakao");
 document.getElementById("floatTel").href = LINKS.tel;
 document.getElementById("heroCta").addEventListener("click", goHome); // 상단 버튼 = 트리 처음부터 시작
+document.getElementById("brandHome").addEventListener("click", (e)=>{ // 브랜드명 클릭 = 홈 최상단 + 트리 초기화
+  e.preventDefault();
+  goHome();
+  window.scrollTo({top:0, behavior:"smooth"});
+});
 
 /* 초기 렌더 */
 renderNode("root");
