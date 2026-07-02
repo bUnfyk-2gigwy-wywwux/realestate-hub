@@ -301,7 +301,6 @@ const LINKS = {
   jeonse:   "https://realestate-risk-screenerrealestate-risk-screener-bdlnggh8pipyk.streamlit.app", // 전세 위험 진단기 (확정)
   tax:      "https://gyeyang-tax.streamlit.app",                // 상속·증여세 진단기 (확정)
   avm:      "https://gyeyang-avm.streamlit.app",              // AVM 간이 공개 (정밀은 비번)
-  sanggwon: "https://sanggwon-lab.streamlit.app",             // 상권 입지 진단 (인천·부천, 간이 공개)
   calc:     "https://claude.ai/public/artifacts/3cab5664-e740-4fc7-b3af-28464b7f13c8", // 매매 정산 계산기 (게시 Artifact)
   auction:  null,                                               // 경매레이더 — Cloud 배포 후 URL 입력 (null = 출시 예정)
   chatbot:  "https://pf.kakao.com/_NmKTX/chat",                 // 카카오 챗봇/1:1 상담 채널
@@ -350,7 +349,6 @@ const TREE = {
     q: "무엇의 가치가 궁금하세요?",
     options: [
       { ic:"🏗️", t:"건물·토지 가치", s:"3방식 종합 자동가치산정(AVM)", next:"end_avm",    chip:"AVM" },
-      { ic:"🛍️", t:"상권·입지", s:"업종 경쟁·포화도 진단 (인천·부천)", next:"end_sanggwon", chip:"상권 진단" },
       { ic:"📈", t:"우리 동네 실거래", s:"최근 거래 사례 상세 확인",     next:"end_recent", chip:"실거래" }
     ]
   },
@@ -394,12 +392,8 @@ const TREE = {
     url:()=>LINKS.waveon.residential, desc:"아파트·빌라·주택 매물 안내 페이지로 이동합니다. 상담 신청 폼에서 조건을 남겨주세요." },
   end_dom_factory:{ end:true, utm:"qna_dom_factory", title:"공장·지식산업센터 안내",
     url:()=>LINKS.waveon.factory, desc:"공장·창고·지식산업센터 매물 안내 페이지로 이동합니다." },
-  end_sanggwon: { end:true, utm:"qna_sanggwon",
-    title:"상권 입지 진단 (인천·부천)", url:()=>LINKS.sanggwon,
-    desc:"인천 전역·부천 17만여 개 상가업소 전수 데이터로 반경 내 경쟁 밀도와 업종 포화도를 무료로 진단합니다. 임대료·매물까지 더한 종합 검토는 상담으로 이어집니다." },
   end_dom_retail:{ end:true, utm:"qna_dom_retail", title:"상권·상가 안내",
-    url:()=>LINKS.waveon.retail, desc:"상가 투자·점포 창업 안내 페이지로 이동합니다. 상담 신청 폼에서 조건을 남겨주세요.",
-    sub:{ label:"입지 먼저 진단 → 상권 진단기", url:()=>LINKS.sanggwon, utm:"qna_dom_retail_sanggwon" } },
+    url:()=>LINKS.waveon.retail, desc:"상가 투자·점포 창업 안내 페이지로 이동합니다. 상담 신청 폼에서 조건을 남겨주세요." },
   end_dom_nursing:{ end:true, utm:"qna_dom_nursing", title:"요양원 안내",
     url:()=>LINKS.waveon.nursing, desc:"요양시설 비공개 인수·매각 안내 페이지로 이동합니다. 익명 상담으로 시작하실 수 있습니다." },
   end_dom_building:{ end:true, utm:"qna_dom_building", title:"건물·토지 안내",
@@ -508,7 +502,6 @@ const TOOLS = [
   { cat:"전세 안전", t:"전세 위험 진단기", d:"등기부 PDF 분석으로 깡통전세 위험도를 사전 진단", url:()=>LINKS.jeonse, utm:"tools_jeonse" },
   { cat:"세금", t:"상속·증여세 진단기", d:"상속·증여 예상 세액 + 부담부증여 양도세 진단", url:()=>LINKS.tax, utm:"tools_tax" },
   { cat:"시세·가치", t:"부동산 AVM", d:"국토부 실거래 기반 가치 구간 무료 진단 (정밀은 상담)", url:()=>LINKS.avm, utm:"tools_avm" },
-  { cat:"상권 분석", t:"상권 입지 진단", d:"인천·부천 17만 업소 데이터 — 경쟁 밀도·포화도 무료 진단", url:()=>LINKS.sanggwon, utm:"tools_sanggwon" },
   { cat:"경매", t:"계양 경매레이더", d:"실거래 시세 대비 저평가율 분석 — 담당자 직접 분석·상담 제공", url:()=>LINKS.auction, utm:"tools_auction", soon:true },
   { cat:"거래 정산", t:"매매 정산 계산기", d:"중개보수·세금 등 매매 정산 항목 일괄 계산", url:()=>LINKS.calc, utm:"tools_calc" },
   { cat:"맞춤 안내", t:"카카오 상담 챗봇", d:"6개 전문 분야 자동 안내 + 담당자 1:1 연결", url:()=>LINKS.chatbot, utm:"tools_chatbot" }
