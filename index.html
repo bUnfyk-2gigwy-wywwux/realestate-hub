@@ -309,10 +309,10 @@ const LINKS = {
   waveon: {
     residential: "https://hongskier-99491.waveon.me",           // 주거형 (게시 완료)
     factory:     "https://hongskier-99492.waveon.me",           // 공장·지산 (게시 완료)
-    retail:      null,   // 상권·상가 (제작 예정)
-    nursing:     null,   // 요양원 (제작 예정)
-    building:    null,   // 건물·토지 (제작 예정)
-    invest:      null    // 임대투자 (제작 예정)
+    retail:      "https://hongskier-99577.waveon.me",  // 상권·상가 (게시 완료)
+    nursing:     "https://hongskier-99581.waveon.me",  // 요양원 (게시 완료)
+    building:    "https://hongskier-99579.waveon.me",  // 건물·토지 (게시 완료)
+    invest:      "https://hongskier-99580.waveon.me"   // 임대투자 (게시 완료)
   }
 };
 
@@ -392,14 +392,14 @@ const TREE = {
     url:()=>LINKS.waveon.residential, desc:"아파트·빌라·주택 매물 안내 페이지로 이동합니다. 상담 신청 폼에서 조건을 남겨주세요." },
   end_dom_factory:{ end:true, utm:"qna_dom_factory", title:"공장·지식산업센터 안내",
     url:()=>LINKS.waveon.factory, desc:"공장·창고·지식산업센터 매물 안내 페이지로 이동합니다." },
-  end_dom_retail:{ end:true, utm:"qna_dom_retail", consultOnly:true, title:"상권·상가 상담",
-    desc:"상권·상가 전용 페이지는 준비 중입니다. 상권분석 데이터 기반 상담을 바로 받아보세요." },
-  end_dom_nursing:{ end:true, utm:"qna_dom_nursing", consultOnly:true, title:"요양원 상담",
-    desc:"요양원 전용 페이지는 준비 중입니다. 요양시설 매매·운영 전문 상담을 바로 받아보세요." },
-  end_dom_building:{ end:true, utm:"qna_dom_building", consultOnly:true, title:"건물·토지 상담",
-    desc:"건물·토지 전용 페이지는 준비 중입니다. AVM 가치 산정과 함께 상담을 받아보세요." },
-  end_dom_invest:{ end:true, utm:"qna_dom_invest", consultOnly:true, title:"임대·투자 상담",
-    desc:"임대·투자 전용 페이지는 준비 중입니다. 수익률 분석 기반 상담을 바로 받아보세요." }
+  end_dom_retail:{ end:true, utm:"qna_dom_retail", title:"상권·상가 안내",
+    url:()=>LINKS.waveon.retail, desc:"상가 투자·점포 창업 안내 페이지로 이동합니다. 상담 신청 폼에서 조건을 남겨주세요." },
+  end_dom_nursing:{ end:true, utm:"qna_dom_nursing", title:"요양원 안내",
+    url:()=>LINKS.waveon.nursing, desc:"요양시설 비공개 인수·매각 안내 페이지로 이동합니다. 익명 상담으로 시작하실 수 있습니다." },
+  end_dom_building:{ end:true, utm:"qna_dom_building", title:"건물·토지 안내",
+    url:()=>LINKS.waveon.building, desc:"통건물·토지 매매 안내 페이지로 이동합니다. AVM 가치 산정 상담과 함께 이용하실 수 있습니다." },
+  end_dom_invest:{ end:true, utm:"qna_dom_invest", title:"임대·투자 안내",
+    url:()=>LINKS.waveon.invest, desc:"수익형 부동산 투자 안내 페이지로 이동합니다. 수익률 분석 기반으로 상담해 드립니다." }
 };
 
 /* ============================================================
@@ -525,10 +525,10 @@ toolGrid.innerHTML = TOOLS.map(t=>{
 const DOMAINS = [
   { ic:"🏡", t:"주거형",    s:"안내 페이지 열기", url:()=>LINKS.waveon.residential, utm:"dom_residential" },
   { ic:"🏭", t:"공장·지산", s:"안내 페이지 열기", url:()=>LINKS.waveon.factory,     utm:"dom_factory" },
-  { ic:"🛍️", t:"상권·상가", s:"준비 중 · 상담 가능", url:()=>LINKS.waveon.retail,   utm:"dom_retail" },
-  { ic:"🏥", t:"요양원",    s:"준비 중 · 상담 가능", url:()=>LINKS.waveon.nursing,  utm:"dom_nursing" },
-  { ic:"🏛️", t:"건물·토지", s:"준비 중 · 상담 가능", url:()=>LINKS.waveon.building, utm:"dom_building" },
-  { ic:"💼", t:"임대·투자", s:"준비 중 · 상담 가능", url:()=>LINKS.waveon.invest,   utm:"dom_invest" }
+  { ic:"🛍️", t:"상권·상가", s:"안내 페이지 열기", url:()=>LINKS.waveon.retail,   utm:"dom_retail" },
+  { ic:"🏥", t:"요양원",    s:"안내 페이지 열기", url:()=>LINKS.waveon.nursing,  utm:"dom_nursing" },
+  { ic:"🏛️", t:"건물·토지", s:"안내 페이지 열기", url:()=>LINKS.waveon.building, utm:"dom_building" },
+  { ic:"💼", t:"임대·투자", s:"안내 페이지 열기", url:()=>LINKS.waveon.invest,   utm:"dom_invest" }
 ];
 const domGrid = document.getElementById("domGrid");
 domGrid.innerHTML = DOMAINS.map(d=>{
