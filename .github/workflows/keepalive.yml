@@ -12,10 +12,19 @@ on:
     - cron: "0 0,8,16 * * *"   # UTC 기준 (KST -9시간)
   workflow_dispatch:            # 수동 실행 버튼 (테스트용)
 
+# WHY: GitHub 은 저장소에 60일간 커밋이 없으면 예약 워크플로를 자동으로 끈다
+#      (2026-10-13 실제로 꺼져 5주간 앱 4개가 방치됨). 아래 마지막 스텝이 30일마다
+#      표식 파일을 커밋해 이를 막는다. 그 커밋에 contents: write 권한이 필요하다.
+permissions:
+  contents: write
+
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -36,6 +45,7 @@ jobs:
               "https://gyeyang-tax.streamlit.app",
               "https://gyeyang-avm.streamlit.app",
               "https://sanggwon-lab.streamlit.app",
+              "https://sajeon-jindan.streamlit.app",   # SNS 프로필에 걸린 진단기 주소
               # 추후 배포 시 주석 해제 후 URL 입력
               # "https://TODO-경매레이더.streamlit.app",
           ]
@@ -61,3 +71,19 @@ jobs:
               browser.close()
           print("완료")
           PYEOF
+
+      # WHY: 매 실행마다 커밋하면 Pages 재배포가 하루 3번 돈다. 마지막 커밋이 30일을 넘겼을 때만
+      #      표식 파일을 갱신한다(60일 자동 중단 기준의 절반).
+      - name: 60일 자동 중단 방지(30일마다 표식 커밋)
+        if: always()
+        run: |
+          LAST=$(git log -1 --format=%ct)
+          AGE_DAYS=$(( ( $(date +%s) - LAST ) / 86400 ))
+          echo "마지막 커밋 ${AGE_DAYS}일 전"
+          if [ "$AGE_DAYS" -lt 30 ]; then echo "30일 미만 — 커밋 생략"; exit 0; fi
+          date -u +"%Y-%m-%d %H:%M UTC" > .github/keepalive_last_run.txt
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/keepalive_last_run.txt
+          git commit -m "chore: keepalive $(date -u +%F)"
+          git push || { echo "::error::표식 커밋 푸시 실패 — 60일 뒤 워크플로가 다시 꺼질 수 있습니다."; exit 1; }
