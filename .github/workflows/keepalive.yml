@@ -41,7 +41,7 @@ jobs:
           from playwright.sync_api import sync_playwright
 
           URLS = [
-              "https://realestate-risk-screenerrealestate-risk-screener-bdlnggh8pipyk.streamlit.app",
+              # 옛 진단기 주소(realestate-risk-screener…)는 2026-11-18 실행에서 "Not found" — 삭제.
               "https://gyeyang-tax.streamlit.app",
               "https://gyeyang-avm.streamlit.app",
               "https://sanggwon-lab.streamlit.app",
@@ -50,6 +50,7 @@ jobs:
               # "https://TODO-경매레이더.streamlit.app",
           ]
 
+          failed = []
           with sync_playwright() as p:
               browser = p.chromium.launch()
               page = browser.new_page()
@@ -63,13 +64,22 @@ jobs:
                           print(f"[WAKE] {url} — 수면 상태 발견, 깨우기 클릭 후 60초 대기")
                           page.wait_for_timeout(60000)
                           print(f"[WAKE-DONE] {url} — 제목: {page.title()}")
+                      # WHY: 없는 주소도 Streamlit 이 "Not found" 페이지를 정상 응답으로 돌려줘
+                      #      종전에는 [OK] 로 찍혔다. 제목으로 구분해 실패로 센다.
+                      elif "not found" in page.title().lower():
+                          print(f"[ERR] {url} — 앱 없음(제목: {page.title()})")
+                          failed.append(url)
                       else:
                           print(f"[OK] {url} — 정상 가동 중 (제목: {page.title()})")
                       page.wait_for_timeout(5000)  # 방문 세션 유지
                   except Exception as e:
                       print(f"[ERR] {url} — {type(e).__name__}: {e}")
+                      failed.append(url)
               browser.close()
           print("완료")
+          # WHY: 앱이 안 열려도 초록 체크로 끝나면 아무도 모른다. 실패가 있으면 실행을 실패로 끝낸다.
+          if failed:
+              raise SystemExit(f"실패 {len(failed)}건: {', '.join(failed)}")
           PYEOF
 
       # WHY: 매 실행마다 커밋하면 Pages 재배포가 하루 3번 돈다. 마지막 커밋이 30일을 넘겼을 때만
